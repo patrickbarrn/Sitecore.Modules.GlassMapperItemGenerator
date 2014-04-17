@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Sitecore.Data;
+using Glass.Mapper.Sc.Configuration.Attributes;
+
+namespace ${SitecoreTemplate.Namespace}
+{
+	/// <summary>
+    /// ${SitecoreTemplate.ClassName}
+    /// <para>Path: ${SitecoreTemplate.Path}</para>
+    /// <para>ID: ${SitecoreTemplate.Id}</para>
+    /// </summary>
+    [SitecoreType(TemplateId = ${SitecoreTemplate.ClassName}.TemplateIdString)]
+    public partial class Test : ${SitecoreTemplate.BaseClassNamespace}.GlassBase, ${SitecoreTemplate.InterfaceName}
+    {
+        public const string TemplateIdString = "${SitecoreTemplate.Id}";
+        public static readonly ID TemplateId = new ID(TemplateIdString);
+        public const string TemplateName = ${SitecoreTemplate.Name};
+
+        public static class Fields
+        {
+			#foreach($field in $Fields)
+
+			#if($field.ReturnType != "")
+			public static class $field.PropertyName
+            {
+                public static readonly ID Id = new ID("$field.FieldId");
+                public const string Name = "$field.Name";
+            }
+			#end
+
+			#end
+        }
+
+		#foreach($field in $GlassMapperFields)
+
+		#if($field.FieldType == "")
+		//Could not find Field Type for $field.FieldName
+		#else
+		/// <summary>
+        /// The $field.Name field.
+        /// <para>Field Type: $field.Type</para>
+        /// <para>Field ID: $field.Id</para>
+        /// </summary>
+        [SitecoreField(${SitecoreTemplate.ClassName}.Fields.${field.FieldName}.Name)]
+        public virtual $field.ReturnType $field.PropertyName { get; private set; }
+		#end
+
+		#end
+    }
+}

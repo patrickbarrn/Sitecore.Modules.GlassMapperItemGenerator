@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E6878647-0A9A-4005-B5FD-835E0108D49C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sitecore.Modules.GlassMapperItemGenerator</RootNamespace>
+    <AssemblyName>Sitecore.Modules.GlassMapperItemGenerator</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Sitecore.Client">
+      <HintPath>..\sc.lib\Sitecore.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Kernel">
+      <HintPath>..\sc.lib\Sitecore.Kernel.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Logging">
+      <HintPath>..\sc.lib\Sitecore.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.NVelocity">
+      <HintPath>..\sc.lib\Sitecore.NVelocity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeGeneration\Contracts\Commands\BuildFolderStructureCommand.cs" />
+    <Compile Include="CodeGeneration\Contracts\Commands\CreateItemClassCommand.cs" />
+    <Compile Include="CodeGeneration\Handlers\Commands\BuildFolderStructureCommandHandler.cs" />
+    <Compile Include="CodeGeneration\Handlers\Commands\CreateItemClassCommandHandler.cs" />
+    <Compile Include="CodeGeneration\ICommandHandler.cs" />
+    <Compile Include="CodeGeneration\IQuery.cs" />
+    <Compile Include="CodeGeneration\IQueryHandler.cs" />
+    <Compile Include="CodeGeneration\Models\SitecoreField.cs" />
+    <Compile Include="CodeGeneration\Models\SitecoreTemplate.cs" />
+    <Compile Include="Commands\GlassMapperItemGeneratorCommand.cs" />
+    <Compile Include="Extensions\ItemExtensions.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\WebControls\BaseGlassMapperCustomItem.cs" />
+    <Compile Include="UI\WebControls\GlassMapperCustomItemByTemplateFolder.cs" />
+    <Compile Include="UI\WebControls\GlassMapperCustomItemByTemplateItem.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CodeGeneration\Contracts\Quries\" />
+    <Folder Include="CodeGeneration\Handlers\Queries\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Config\Include\Sitecore.Modules.GlassMapperItemGenerator.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\ItemMapper.designer.vm" />
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\ItemMapper.vm" />
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\IItemMapper.designer.vm" />
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\IItemMapper.vm" />
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\GlassBase.vm" />
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\IGlassBase.vm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sitecore modules\Shell\GlassMapperItemGenerator\GlassMapperCustomItemByTemplateFolder.xml" />
+    <Content Include="sitecore modules\Shell\GlassMapperItemGenerator\GlassMapperCustomItemByTemplateItem.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <MyBinFiles Include="C:\Projects\Sitecore.Modules.GlassMapperItemGenerator\Sitecore.Modules.GlassMapperItemGenerator\bin\$(Configuration)\Sitecore.Modules.GlassMapperItemGenerator.*" />
+      <MyLayoutFiles Include="C:\Projects\Sitecore.Modules.GlassMapperItemGenerator\Sitecore.Modules.GlassMapperItemGenerator\sitecore modules\**\*.*" Exclude="C:\Projects\Sitecore.Modules.GlassMapperItemGenerator\Sitecore.Modules.GlassMapperItemGenerator\sitecore modules\**\*.cs" />
+      <MyConfigFiles Include="C:\Projects\Sitecore.Modules.GlassMapperItemGenerator\Sitecore.Modules.GlassMapperItemGenerator\App_Config\Include\*.config" />
+    </ItemGroup>
+    <Copy SourceFiles="@(MyBinFiles)" DestinationFiles="@(MyBinFiles->'C:\inetpub\wwwroot\clientName700x130810\Website\bin\%(RecursiveDir)%(Filename)%(Extension)')">
+    </Copy>
+    <Copy SourceFiles="@(MyLayoutFiles)" DestinationFiles="@(MyLayoutFiles->'C:\inetpub\wwwroot\clientName700x130810\Website\sitecore modules\%(RecursiveDir)%(Filename)%(Extension)')">
+    </Copy>
+    <Copy SourceFiles="@(MyConfigFiles)" DestinationFiles="@(MyConfigFiles->'C:\inetpub\wwwroot\clientName700x130810\Website\App_Config\Include\%(RecursiveDir)%(Filename)%(Extension)')">
+    </Copy>
+  </Target>
+</Project>

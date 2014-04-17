@@ -1,0 +1,19 @@
+﻿using System;
+using Glass.Mapper.Sc.Configuration;
+using Glass.Mapper.Sc.Configuration.Attributes;
+using Sitecore.Globalization;
+
+namespace ${CustomItemInformation.FullNameSpace}
+{
+    public abstract class GlassBase : IGlassBase
+    {
+        [SitecoreId]
+        public virtual Guid Id { get; protected set; }
+
+        [SitecoreInfo(SitecoreInfoType.Language)]
+        public virtual Language Language { get; protected set; }
+
+        [SitecoreInfo(SitecoreInfoType.Version)]
+        public virtual int Version { get; protected set; }
+    }
+}

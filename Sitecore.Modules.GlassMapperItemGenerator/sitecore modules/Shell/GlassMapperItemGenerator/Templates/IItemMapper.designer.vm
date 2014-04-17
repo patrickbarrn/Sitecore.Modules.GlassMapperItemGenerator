@@ -1,0 +1,29 @@
+﻿using Glass.Mapper.Sc.Configuration.Attributes;
+
+namespace ${SitecoreTemplate.Namespace}
+{
+    /// <summary>
+    /// ${SitecoreTemplate.InterfaceName} Interface
+    /// <para>Path: ${SitecoreTemplate.Path}</para>
+    /// <para>ID: ${SitecoreTemplate.Id}</para>
+    /// </summary>
+    [SitecoreType(TemplateId = ${SitecoreTemplate.ClassName}.TemplateIdString)]
+    public partial interface ${SitecoreTemplate.InterfaceName} : ${SitecoreTemplate.BaseClassNamespace}.IGlassBase
+    {
+		#foreach($field in $Fields)
+
+		#if($field.ReturnType == "")
+		//Could not find Field Type for $field.Name
+		#else
+		/// <summary>
+        /// The $field.Name field.
+        /// <para>Field Type: $field.Type</para>
+        /// <para>Field ID: $field.Id</para>
+        /// </summary>
+        [SitecoreField(${SitecoreTemplate.ClassName}.Fields.${field.Name}.Name)]
+        $field.ReturnType $field.PropertyName { get; }
+		#end
+
+		#end
+    }
+}

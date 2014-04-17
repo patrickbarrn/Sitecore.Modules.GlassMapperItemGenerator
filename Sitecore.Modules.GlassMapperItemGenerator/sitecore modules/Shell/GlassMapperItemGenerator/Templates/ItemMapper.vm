@@ -1,0 +1,7 @@
+﻿
+namespace ${SitecoreTemplate.Namespace}
+{
+    public partial class ${SitecoreTemplate.ClassName}
+    {
+    }
+}

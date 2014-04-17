@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <GlassMapperCustomItemByTemplateItem>
+    <FormDialog 
+      Icon="Applications/32x32/gears_run.png" 
+      Header="GlassMapper Custom Item Generator" 
+      Text="Generate the GlassMapper classe for this template." 
+      OKButton="Generate" 
+      CancelButton="OK">
+      
+      <CodeBeside Type="Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls.GlassMapperCustomItemByTemplateItem, Sitecore.Modules.GlassMapperItemGenerator"/>
+      
+      <GridPanel Columns="1">
+        <Border Height="50%">
+          Choose your Namespace and File Path to generate the GlassMapper class for this Template.
+          <br />
+          Namespace:
+          <Edit ID="ItemNamespace" Width="100%" />
+          <br /><br />
+          GlassMapper Root Path: (This will automatically add the folder structure based on the location of your template.)
+          <Edit ID="ItemFilePath" Width="100%" />
+        </Border>
+      </GridPanel>
+      
+    </FormDialog>
+  </GlassMapperCustomItemByTemplateItem>
+</control>
