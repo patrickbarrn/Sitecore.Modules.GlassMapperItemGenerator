@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Sitecore.Data.Items;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Modules.GlassMapperItemGenerator.Extensions;
@@ -32,7 +28,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
             TemplateList.Controls.Clear();
 
             var templateFolderItems = TemplateItem.GetTemplateSubItems();
-            templateFolderItems.ForEach(x=> TemplateList.Controls.Add(new ChecklistItem()
+            templateFolderItems.ForEach(x=> TemplateList.Controls.Add(new ChecklistItem
                 {
                     ID = Control.GetUniqueID("I"),
                     Value = x.ID.ToString(),
@@ -44,10 +40,16 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
         
         public override string GenerateCodeFiles()
         {
-            // TODO: 
+            foreach (
+                var templateItem in
+                    TemplateList.Items.Where(template => template.Checked)
+                                .Select(template => Context.ContentDatabase.GetItem(template.Value))
+                                .Where(templateItem => templateItem != null))
+            {
+                base.GenerateTemplateClassAndInterface(templateItem);
+            }
+
             return "[Put Custom Message here]";
         }
-
-        
     }
 }

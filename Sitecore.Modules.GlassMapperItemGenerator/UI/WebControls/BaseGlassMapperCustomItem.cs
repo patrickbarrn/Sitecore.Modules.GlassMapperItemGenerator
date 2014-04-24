@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Sitecore.Data.Items;
+using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Contracts.Quries;
+using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Commands;
+using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Queries;
+using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Models;
+using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Contracts.Commands;
+using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration;
 using Sitecore.Web.UI.Pages;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -15,13 +17,34 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
     {
         protected Edit ItemNamespace;
         protected Edit ItemFilePath;
-        
+
+        private readonly ICommandHandler<BuildFolderStructureCommand> _buildFolderStructureHandler;
+        private readonly ICommandHandler<CreateItemClassCommand> _createItemClassHandler;
+        private readonly IQueryHandler<SitecoreTemplateInfoQuery, SitecoreTemplate> _sitecoreTemplateInfoHandler; 
+
+        protected BaseGlassMapperCustomItem()
+        {
+            _buildFolderStructureHandler = new BuildFolderStructureCommandHandler();
+            _createItemClassHandler = new CreateItemClassCommandHandler();
+            _sitecoreTemplateInfoHandler = new SitecoreTemplateInfoQueryHandler();
+        }
+
         protected string ContentId
         {
             get
             {
                 var value = WebUtil.GetQueryString("id");
                 return !string.IsNullOrEmpty(value) ? value : string.Empty;
+            }
+        }
+
+        protected string BaseGlassClassNamespace
+        {
+            get
+            {
+                return ItemNamespace.Value + "." +
+                   Configuration.Settings.GetSetting(
+                       "Sitecore.Modules.GlassMapperItemGenerator.GlassMapperClassFolder");
             }
         }
 
@@ -33,8 +56,10 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    var defaultNamespace = Configuration.Settings.GetSetting("Sitecore.Modules.GlassMapperItemGenerator.DefaultNamespace");
-                    var defaultFilePath = Configuration.Settings.GetSetting("Sitecore.Modules.GlassMapperItemGenerator.DefaultFilePath");
+                    var defaultNamespace =
+                        Configuration.Settings.GetSetting("Sitecore.Modules.GlassMapperItemGenerator.DefaultNamespace");
+                    var defaultFilePath =
+                        Configuration.Settings.GetSetting("Sitecore.Modules.GlassMapperItemGenerator.DefaultFilePath");
 
                     ItemNamespace.Value = !string.IsNullOrWhiteSpace(defaultNamespace) ? defaultNamespace : string.Empty;
                     ItemFilePath.Value = !string.IsNullOrWhiteSpace(defaultFilePath) ? defaultFilePath : string.Empty;
@@ -57,6 +82,69 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
             base.OnOK(sender, args);
         }
 
+        protected virtual void GenerateTemplateClassAndInterface(TemplateItem template)
+        {
+            var templateInfo = _sitecoreTemplateInfoHandler.Handle(new SitecoreTemplateInfoQuery
+                {
+                    TemplateItem = template,
+                    BaseNamespace = ItemNamespace.Value,
+                    BaseGlassNamespace = BaseGlassClassNamespace,
+                    BaseFilePath = ItemFilePath.Value
+                });
+
+            // Create Directory structure if it doesn't exist
+            _buildFolderStructureHandler.Handle(new BuildFolderStructureCommand
+            {
+                BaseNamespace = ItemNamespace.Value,
+                ClassNamespace = templateInfo.Namespace,
+                FilePathRoot = ItemFilePath.Value
+            });
+
+            // Generate "Designer" partial interface, always overwrite this file
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = templateInfo,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = templateInfo.FilePathFolder + templateInfo.InterfaceName +".designer.cs",
+                TemplateName = "IItemMapper.designer.vm",
+                SkipIfFileAlreadyExists = false,
+            });
+
+            // Generate "Designer" partial class, always overwrite this file
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = templateInfo,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = templateInfo.FilePathFolder + templateInfo.ClassName + ".designer.cs",
+                TemplateName = "ItemMapper.designer.vm",
+                SkipIfFileAlreadyExists = false,
+            });
+
+            // Generate "main" partial interface, never overwrite this file
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = templateInfo,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = templateInfo.FilePathFolder + templateInfo.InterfaceName + ".cs",
+                TemplateName = "IItemMapper.vm",
+                SkipIfFileAlreadyExists = true,
+            });
+
+            // Generate "main" partial class, never overwrite this file
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = templateInfo,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = templateInfo.FilePathFolder + templateInfo.ClassName + ".cs",
+                TemplateName = "ItemMapper.vm",
+                SkipIfFileAlreadyExists = true,
+            });
+        }
+
         public abstract bool LoadTemplates();
         public abstract string GenerateCodeFiles();
 
@@ -66,9 +154,52 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
             return GetFilePathForFolders(item.Parent) + "\\" + item.Name;
         }
 
-        protected static void GenerateGlassBaseItems()
+        protected void GenerateGlassBaseItems()
         {
-            // TODO: generate /GlassBase/IGlassBase.cs, & /GlassBase/GlassBase.cs
+            var filePath = ItemFilePath.Value +@"\" + Configuration.Settings.GetSetting(
+                "Sitecore.Modules.GlassMapperItemGenerator.GlassMapperClassFolder") +@"\";
+            
+            var classFilePath = filePath + "GlassBase.cs";
+            var interfaceFilePath = filePath + "IGlassBase.cs";
+
+            var glassMapperTempalate = new SitecoreTemplate
+            {
+                Namespace = BaseGlassClassNamespace
+                    //ItemNamespace.Value + "." +
+                    //Configuration.Settings.GetSetting(
+                    //    "Sitecore.Modules.GlassMapperItemGenerator.GlassMapperClassFolder")
+            };
+
+            _buildFolderStructureHandler.Handle(new BuildFolderStructureCommand
+                {
+                    BaseNamespace = ItemNamespace.Value,
+                    ClassNamespace =
+                        Configuration.Settings.GetSetting(
+                            "Sitecore.Modules.GlassMapperItemGenerator.GlassMapperClassFolder"),
+                    FilePathRoot = ItemFilePath.Value
+                });
+
+            // create interface item
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+                {
+                    SitecoreTemplate = glassMapperTempalate,
+                    WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                    ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                    FilePath = interfaceFilePath,
+                    TemplateName = "IGlassBase.vm",
+                    SkipIfFileAlreadyExists = true,
+                });
+
+            // create class item
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = glassMapperTempalate,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = classFilePath,
+                TemplateName = "GlassBase.vm",
+                SkipIfFileAlreadyExists = true,
+            });
         }
     }
 }

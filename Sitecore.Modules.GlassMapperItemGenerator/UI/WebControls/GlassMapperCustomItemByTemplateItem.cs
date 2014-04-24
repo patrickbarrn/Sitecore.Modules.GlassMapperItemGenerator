@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Sitecore.Data.Items;
+﻿using Sitecore.Data.Items;
 
 namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
 {
-    class GlassMapperCustomItemByTemplateItem : BaseGlassMapperCustomItem
+    internal class GlassMapperCustomItemByTemplateItem : BaseGlassMapperCustomItem
     {
         protected TemplateItem TemplateItem { get; set; }
 
@@ -17,13 +12,12 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
 
             return TemplateItem != null;
         }
-        
+
         public override string GenerateCodeFiles()
         {
-            // TODO: 
-            return "[Put Custom Message here]"; 
-        }
+            base.GenerateTemplateClassAndInterface(TemplateItem);
 
-        
+            return "[Put Custom Message here]";
+        }
     }
 }

@@ -3,7 +3,7 @@ using Glass.Mapper.Sc.Configuration;
 using Glass.Mapper.Sc.Configuration.Attributes;
 using Sitecore.Globalization;
 
-namespace ${CustomItemInformation.FullNameSpace}
+namespace  ${SitecoreTemplate.Namespace}
 {
     public interface IGlassBase
     {

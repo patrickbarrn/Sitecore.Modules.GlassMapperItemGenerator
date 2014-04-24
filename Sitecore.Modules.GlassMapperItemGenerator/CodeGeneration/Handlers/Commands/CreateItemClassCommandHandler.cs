@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using NVelocity;
 using NVelocity.App;
 using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Contracts.Commands;
@@ -14,25 +9,20 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Comm
     {
         public void Handle(CreateItemClassCommand command)
         {
+            if (command.SkipIfFileAlreadyExists && File.Exists(command.FilePath)) return;
+
             var baseContext = new VelocityContext();
 
             baseContext.Put("SitecoreTemplate", command.SitecoreTemplate);
 
-            var interfaceFilePath = string.Empty; // TODO: get full path of the class file(s)
-            var classFilePath = string.Empty; // TODO: get full path of the class file(s)
-            
-            using (var streamWriter = new StreamWriter(interfaceFilePath))
-            {
-                Velocity.Init();
-                streamWriter.Write(Text.NVelocity.VelocityHelper.Evaluate(baseContext, "template text", "logname"));
-                // TODO: any reporting / logging needed should go here for base interface
-            }
+            TextReader reader = new StreamReader(command.WebAppBasePath + command.ModuleTemplatePath + command.TemplateName);
+            var template = reader.ReadToEnd();
 
-            using (var streamWriter = new StreamWriter(classFilePath))
+            using (var streamWriter = new StreamWriter(command.FilePath))
             {
                 Velocity.Init();
-                streamWriter.Write(Text.NVelocity.VelocityHelper.Evaluate(baseContext, "template text", "logname"));
-                // TODO: any reporting / logging needed should go here for base class
+                streamWriter.Write(Text.NVelocity.VelocityHelper.Evaluate(baseContext, template,
+                                                                          "GlassMapperItemGenerator.CreateItemClassCommandHandler"));
             }
         }
     }

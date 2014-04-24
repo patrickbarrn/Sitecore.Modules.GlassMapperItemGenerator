@@ -57,8 +57,10 @@
   <ItemGroup>
     <Compile Include="CodeGeneration\Contracts\Commands\BuildFolderStructureCommand.cs" />
     <Compile Include="CodeGeneration\Contracts\Commands\CreateItemClassCommand.cs" />
+    <Compile Include="CodeGeneration\Contracts\Quries\SitecoreTemplateInfoQuery.cs" />
     <Compile Include="CodeGeneration\Handlers\Commands\BuildFolderStructureCommandHandler.cs" />
     <Compile Include="CodeGeneration\Handlers\Commands\CreateItemClassCommandHandler.cs" />
+    <Compile Include="CodeGeneration\Handlers\Queries\SitecoreTemplateInfoQueryHandler.cs" />
     <Compile Include="CodeGeneration\ICommandHandler.cs" />
     <Compile Include="CodeGeneration\IQuery.cs" />
     <Compile Include="CodeGeneration\IQueryHandler.cs" />
@@ -72,10 +74,7 @@
     <Compile Include="UI\WebControls\GlassMapperCustomItemByTemplateFolder.cs" />
     <Compile Include="UI\WebControls\GlassMapperCustomItemByTemplateItem.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CodeGeneration\Contracts\Quries\" />
-    <Folder Include="CodeGeneration\Handlers\Queries\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="App_Config\Include\Sitecore.Modules.GlassMapperItemGenerator.config">
       <SubType>Designer</SubType>
