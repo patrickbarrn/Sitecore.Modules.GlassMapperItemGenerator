@@ -18,10 +18,11 @@ namespace ${SitecoreTemplate.Namespace}
 {
 	/// <summary>
     /// ${SitecoreTemplate.ClassName}
+	/// <para>${SitecoreTemplate.ShortDescription}</para>
     /// <para>Path: ${SitecoreTemplate.Path}</para>
     /// <para>ID: ${SitecoreTemplate.Id}</para>
     /// </summary>
-    [SitecoreType(TemplateId = ${SitecoreTemplate.ClassName}.TemplateIdString)]
+    [SitecoreType(TemplateId = "${SitecoreTemplate.Id}")]
     public partial class ${SitecoreTemplate.ClassName} : ${SitecoreTemplate.BaseClassNamespace}.GlassBase, ${SitecoreTemplate.InterfaceName}
     {
         public const string TemplateIdString = "${SitecoreTemplate.Id}";
@@ -54,10 +55,11 @@ namespace ${SitecoreTemplate.Namespace}
 
 		/// <summary>
         /// The $field.Name field.
+		/// <para>$field.ShortDescription</para>
         /// <para>Field Type: $field.Type</para>
         /// <para>Field ID: $field.Id</para>
         /// </summary>
-        [SitecoreField(${SitecoreTemplate.ClassName}.Fields.${field.PropertyName}Field.Name)]
+		[SitecoreField("${field.Name}")]
         public virtual $field.ReturnType $field.PropertyName { get; private set; }
 
 		#end

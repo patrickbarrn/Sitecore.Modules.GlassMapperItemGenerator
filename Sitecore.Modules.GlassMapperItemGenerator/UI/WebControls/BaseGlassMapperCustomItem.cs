@@ -111,17 +111,6 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                 SkipIfFileAlreadyExists = false,
             });
 
-            // Generate "Designer" partial class, always overwrite this file
-            _createItemClassHandler.Handle(new CreateItemClassCommand
-            {
-                SitecoreTemplate = templateInfo,
-                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
-                ModuleTemplatePath = Global.NVelocityTemplateFolder,
-                FilePath = templateInfo.FilePathFolder + templateInfo.ClassName + ".designer.cs",
-                TemplateName = "ItemMapper.designer.vm",
-                SkipIfFileAlreadyExists = false,
-            });
-
             // Generate "main" partial interface, never overwrite this file
             _createItemClassHandler.Handle(new CreateItemClassCommand
             {
@@ -131,6 +120,19 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                 FilePath = templateInfo.FilePathFolder + templateInfo.InterfaceName + ".cs",
                 TemplateName = "IItemMapper.vm",
                 SkipIfFileAlreadyExists = true,
+            });
+
+            if (templateInfo.IsInterfaceTemplate) return; // don't generate the class if it's a interface type template
+
+            // Generate "Designer" partial class, always overwrite this file
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = templateInfo,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = templateInfo.FilePathFolder + templateInfo.ClassName + ".designer.cs",
+                TemplateName = "ItemMapper.designer.vm",
+                SkipIfFileAlreadyExists = false,
             });
 
             // Generate "main" partial class, never overwrite this file

@@ -18,10 +18,11 @@ namespace ${SitecoreTemplate.Namespace}
 {
     /// <summary>
     /// ${SitecoreTemplate.InterfaceName} Interface
+	/// <para>${SitecoreTemplate.ShortDescription}</para>
     /// <para>Path: ${SitecoreTemplate.Path}</para>
     /// <para>ID: ${SitecoreTemplate.Id}</para>
     /// </summary>
-    [SitecoreType(TemplateId = ${SitecoreTemplate.ClassName}.TemplateIdString)]
+    [SitecoreType(TemplateId = "${SitecoreTemplate.Id}")]
     public partial interface ${SitecoreTemplate.InterfaceName} : ${SitecoreTemplate.BaseClassNamespace}.IGlassBase
     {
 		#foreach($field in ${SitecoreTemplate.Fields})
@@ -32,10 +33,11 @@ namespace ${SitecoreTemplate.Namespace}
 
 		/// <summary>
         /// The $field.Name field.
+		/// <para>$field.ShortDescription</para>
         /// <para>Field Type: $field.Type</para>
         /// <para>Field ID: $field.Id</para>
         /// </summary>
-        [SitecoreField(${SitecoreTemplate.ClassName}.Fields.${field.PropertyName}Field.Name)]
+		[SitecoreField("${field.Name}")]
         $field.ReturnType $field.PropertyName { get; }
 
 		#end

@@ -62,12 +62,14 @@
     <Compile Include="CodeGeneration\Handlers\Commands\CreateItemClassCommandHandler.cs" />
     <Compile Include="CodeGeneration\Handlers\Queries\SitecoreTemplateInfoQueryHandler.cs" />
     <Compile Include="CodeGeneration\ICommandHandler.cs" />
+    <Compile Include="CodeGeneration\Inflector.cs" />
     <Compile Include="CodeGeneration\IQuery.cs" />
     <Compile Include="CodeGeneration\IQueryHandler.cs" />
     <Compile Include="CodeGeneration\Models\SitecoreField.cs" />
     <Compile Include="CodeGeneration\Models\SitecoreTemplate.cs" />
     <Compile Include="Commands\GlassMapperItemGeneratorCommand.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\WebControls\BaseGlassMapperCustomItem.cs" />

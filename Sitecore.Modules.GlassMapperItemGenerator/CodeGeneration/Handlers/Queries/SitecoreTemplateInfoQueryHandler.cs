@@ -2,6 +2,7 @@
 using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Contracts.Quries;
 using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Models;
 using System.Linq;
+using Sitecore.Modules.GlassMapperItemGenerator.Extensions;
 
 namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Queries
 {
@@ -14,12 +15,15 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                     Id = query.TemplateItem.ID.ToString(),
                     Name = query.TemplateItem.Name,
                     Path = query.TemplateItem.InnerItem.Paths.Path,
+                    ShortDescription = query.TemplateItem.InnerItem.Fields["__Short Description"].Value,
+                    LongDescription = query.TemplateItem.InnerItem.Fields["__Long Description"].Value,
                     
                     BaseClassNamespace = query.BaseGlassNamespace,
-                    ClassName = RemoveIllegalCharacters(query.TemplateItem.Name),
-                    InterfaceName = "I" + RemoveIllegalCharacters(query.TemplateItem.Name),
+                    ClassName = query.TemplateItem.Name.AsClassName(),
+                    InterfaceName = query.TemplateItem.Name.AsInterfaceName(),
                     Namespace = CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseNamespace, ".", false),
-                    FilePathFolder = CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\", true)
+                    FilePathFolder = CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\", true),
+                    IsInterfaceTemplate = query.TemplateItem.Name.IsInterfaceWord(),
                 };
 
             foreach (
@@ -31,7 +35,10 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                                  Id = fieldInfo.ID.ToString(),
                                  Name = fieldInfo.Name,
                                  Type = fieldInfo.Type,
-                                 PropertyName = RemoveIllegalCharacters(fieldInfo.Name),
+                                 ShortDescription = fieldInfo.InnerItem.Fields["__Short Description"].Value,
+                                 LongDescription = fieldInfo.InnerItem.Fields["__Long Description"].Value,
+
+                                 PropertyName = fieldInfo.Name.AsPropertyName(),
                                  ReturnType = GetFieldReturnType(fieldInfo.Type)
                              }))
             {
