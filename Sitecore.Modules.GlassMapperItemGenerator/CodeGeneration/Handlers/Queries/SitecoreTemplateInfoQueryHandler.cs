@@ -21,11 +21,13 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                     BaseClassNamespace = query.BaseGlassNamespace,
                     ClassName = query.TemplateItem.Name.AsClassName(),
                     InterfaceName = query.TemplateItem.Name.AsInterfaceName(),
-                    Namespace = CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseNamespace, ".", false),
+                    Namespace = GetNamespace(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseNamespace),
                     FilePathFolder = CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\", true),
                     IsInterfaceTemplate = query.TemplateItem.Name.IsInterfaceWord(),
+                    BaseTemplateNamespaces = GetBaseNamespaces(query.TemplateItem, query.BaseNamespace, ", "),
                 };
 
+            // all fields that this template has (this includes any inherited fields from other template items)
             foreach (
                 var templateField in
                     query.TemplateItem.Fields.Where(t => !t.Name.StartsWith("__"))
@@ -45,12 +47,63 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                 templateInfo.Fields.Add(templateField);
             }
 
+            // fields only specific to this template
+            foreach (
+                var templateField in
+                    query.TemplateItem.OwnFields.Where(t => !t.Name.StartsWith("__"))
+                         .ToList()
+                         .Select(fieldInfo => new SitecoreField
+                         {
+                             Id = fieldInfo.ID.ToString(),
+                             Name = fieldInfo.Name,
+                             Type = fieldInfo.Type,
+                             ShortDescription = fieldInfo.InnerItem.Fields["__Short Description"].Value,
+                             LongDescription = fieldInfo.InnerItem.Fields["__Long Description"].Value,
+
+                             PropertyName = fieldInfo.Name.AsPropertyName(),
+                             ReturnType = GetFieldReturnType(fieldInfo.Type)
+                         }))
+            {
+                templateInfo.OwnFields.Add(templateField);
+            }
+
             return templateInfo;
+        }
+
+        private static string GetBaseNamespaces(Data.Items.TemplateItem template, string baseNamespace, string preString)
+        {
+            var namespaces = new System.Collections.Generic.List<string>();
+
+            foreach (var baseTemplate in template.BaseTemplates)
+            {
+                if (baseTemplate.InnerItem.Paths.Path.Contains("/sitecore/templates/System"))
+                    continue;
+                namespaces.Add(GetNamespace(baseTemplate.InnerItem.Paths.Path, baseNamespace));
+            }
+
+            return namespaces.Any() ? preString + string.Join(", ", namespaces) : string.Empty;
         }
 
         private static string RemoveIllegalCharacters(string value)
         {
             return value.Replace(" ", string.Empty).Replace("-", string.Empty);
+        }
+
+        private static string GetNamespace(string templatePath, string basePath)
+        {
+            // strip the base folder path to get the relative path of the template
+            var path = templatePath.Replace("/sitecore/templates/", string.Empty);
+
+            // if not at the template root remove the first slash
+            var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
+            if (index >= 0)
+                path = path.Substring(index + 1);
+
+            var namespaceSegments = new System.Collections.Generic.List<string>();
+            namespaceSegments.Add(basePath);
+            namespaceSegments.Add(path.Replace("/", "."));
+
+            return namespaceSegments.AsNamespace();
         }
 
         private static string CombineClassData(string templatePath, string basePath, string seperator, bool endWithSepeartor)

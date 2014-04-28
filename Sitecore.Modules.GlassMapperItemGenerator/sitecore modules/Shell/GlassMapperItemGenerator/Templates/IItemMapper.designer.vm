@@ -23,9 +23,9 @@ namespace ${SitecoreTemplate.Namespace}
     /// <para>ID: ${SitecoreTemplate.Id}</para>
     /// </summary>
     [SitecoreType(TemplateId = "${SitecoreTemplate.Id}")]
-    public partial interface ${SitecoreTemplate.InterfaceName} : ${SitecoreTemplate.BaseClassNamespace}.IGlassBase
+    public partial interface ${SitecoreTemplate.InterfaceName} : ${SitecoreTemplate.BaseClassNamespace}.IGlassBase${SitecoreTemplate.BaseTemplateNamespaces}
     {
-		#foreach($field in ${SitecoreTemplate.Fields})
+		#foreach($field in ${SitecoreTemplate.OwnFields})
 
 		#if($field.ReturnType == "")
 		//Could not find Field Type for $field.Name

@@ -16,12 +16,15 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Models
         public string InterfaceName { get; set; }
         public string FilePathFolder { get; set; }
         public bool IsInterfaceTemplate { get; set; }
+        public string BaseTemplateNamespaces { get; set; }
 
         public IList<SitecoreField> Fields { get; set; }
-
+        public IList<SitecoreField> OwnFields { get; set; }
+        
         public SitecoreTemplate()
         {
             Fields = new List<SitecoreField>();
+            OwnFields = new List<SitecoreField>();
         }
     }
 }

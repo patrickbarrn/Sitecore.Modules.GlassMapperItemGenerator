@@ -59,6 +59,7 @@ namespace ${SitecoreTemplate.Namespace}
         /// <para>Field Type: $field.Type</para>
         /// <para>Field ID: $field.Id</para>
         /// </summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sitecore.Modules.GlassMapperItemGenerator - ItemMapper.designer.vm", "1.0")]
 		[SitecoreField("${field.Name}")]
         public virtual $field.ReturnType $field.PropertyName { get; private set; }
 
