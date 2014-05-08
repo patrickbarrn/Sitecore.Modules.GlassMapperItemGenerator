@@ -13,6 +13,7 @@ using System.Linq;
 using System.Web;
 using Sitecore.Data;
 using Glass.Mapper.Sc.Configuration.Attributes;
+using Glass.Mapper.Sc.Fields;
 
 namespace ${SitecoreTemplate.Namespace}
 {

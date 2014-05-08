@@ -162,14 +162,13 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                 "Sitecore.Modules.GlassMapperItemGenerator.GlassMapperClassFolder") +@"\";
             
             var classFilePath = filePath + "GlassBase.cs";
+            var classFilePathDesigner = filePath + "GlassBase.designer.cs";
             var interfaceFilePath = filePath + "IGlassBase.cs";
+            var interfaceFilePathDesigner = filePath + "IGlassBase.designer.cs";
 
             var glassMapperTempalate = new SitecoreTemplate
             {
                 Namespace = BaseGlassClassNamespace
-                    //ItemNamespace.Value + "." +
-                    //Configuration.Settings.GetSetting(
-                    //    "Sitecore.Modules.GlassMapperItemGenerator.GlassMapperClassFolder")
             };
 
             _buildFolderStructureHandler.Handle(new BuildFolderStructureCommand
@@ -192,6 +191,16 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                     SkipIfFileAlreadyExists = true,
                 });
 
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = glassMapperTempalate,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = interfaceFilePathDesigner,
+                TemplateName = "IGlassBase.designer.vm",
+                SkipIfFileAlreadyExists = false,
+            });
+
             // create class item
             _createItemClassHandler.Handle(new CreateItemClassCommand
             {
@@ -201,6 +210,16 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                 FilePath = classFilePath,
                 TemplateName = "GlassBase.vm",
                 SkipIfFileAlreadyExists = true,
+            });
+
+            _createItemClassHandler.Handle(new CreateItemClassCommand
+            {
+                SitecoreTemplate = glassMapperTempalate,
+                WebAppBasePath = System.Web.HttpContext.Current.Server.MapPath("/"),
+                ModuleTemplatePath = Global.NVelocityTemplateFolder,
+                FilePath = classFilePathDesigner,
+                TemplateName = "GlassBase.designer.vm",
+                SkipIfFileAlreadyExists = false,
             });
         }
     }

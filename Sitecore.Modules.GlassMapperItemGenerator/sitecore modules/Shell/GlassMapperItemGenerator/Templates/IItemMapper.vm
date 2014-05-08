@@ -1,4 +1,5 @@
-﻿namespace ${SitecoreTemplate.Namespace}
+﻿
+namespace ${SitecoreTemplate.Namespace}
 {
     public partial interface ${SitecoreTemplate.InterfaceName}
     {

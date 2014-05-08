@@ -17,12 +17,13 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                     Path = query.TemplateItem.InnerItem.Paths.Path,
                     ShortDescription = query.TemplateItem.InnerItem.Fields["__Short Description"].Value,
                     LongDescription = query.TemplateItem.InnerItem.Fields["__Long Description"].Value,
-                    
+
                     BaseClassNamespace = query.BaseGlassNamespace,
                     ClassName = query.TemplateItem.Name.AsClassName(),
                     InterfaceName = query.TemplateItem.Name.AsInterfaceName(),
                     Namespace = GetNamespace(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseNamespace),
-                    FilePathFolder = CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\", true),
+                    FilePathFolder =
+                        CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\", true),
                     IsInterfaceTemplate = query.TemplateItem.Name.IsInterfaceWord(),
                     BaseTemplateNamespaces = GetBaseNamespaces(query.TemplateItem, query.BaseNamespace, ", "),
                 };
@@ -30,7 +31,9 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
             // all fields that this template has (this includes any inherited fields from other template items)
             foreach (
                 var templateField in
-                    query.TemplateItem.Fields.Where(t => !t.Name.StartsWith("__"))
+                    query.TemplateItem.Fields.Where(
+                        t =>
+                        !t.Name.StartsWith("__") && !t.InnerItem.Paths.Path.StartsWith("/sitecore/templates/System"))
                          .ToList()
                          .Select(fieldInfo => new SitecoreField
                              {
@@ -53,16 +56,16 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                     query.TemplateItem.OwnFields.Where(t => !t.Name.StartsWith("__"))
                          .ToList()
                          .Select(fieldInfo => new SitecoreField
-                         {
-                             Id = fieldInfo.ID.ToString(),
-                             Name = fieldInfo.Name,
-                             Type = fieldInfo.Type,
-                             ShortDescription = fieldInfo.InnerItem.Fields["__Short Description"].Value,
-                             LongDescription = fieldInfo.InnerItem.Fields["__Long Description"].Value,
+                             {
+                                 Id = fieldInfo.ID.ToString(),
+                                 Name = fieldInfo.Name,
+                                 Type = fieldInfo.Type,
+                                 ShortDescription = fieldInfo.InnerItem.Fields["__Short Description"].Value,
+                                 LongDescription = fieldInfo.InnerItem.Fields["__Long Description"].Value,
 
-                             PropertyName = fieldInfo.Name.AsPropertyName(),
-                             ReturnType = GetFieldReturnType(fieldInfo.Type)
-                         }))
+                                 PropertyName = fieldInfo.Name.AsPropertyName(),
+                                 ReturnType = GetFieldReturnType(fieldInfo.Type)
+                             }))
             {
                 templateInfo.OwnFields.Add(templateField);
             }
@@ -78,7 +81,9 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
             {
                 if (baseTemplate.InnerItem.Paths.Path.Contains("/sitecore/templates/System"))
                     continue;
-                namespaces.Add(GetNamespace(baseTemplate.InnerItem.Paths.Path, baseNamespace));
+                var parentPathNamespace = GetNamespace(baseTemplate.InnerItem.Paths.ParentPath, baseNamespace);
+                var interfaceName = baseTemplate.InnerItem.Name.AsInterfaceName();
+                namespaces.Add(parentPathNamespace +"." +interfaceName);
             }
 
             return namespaces.Any() ? preString + string.Join(", ", namespaces) : string.Empty;
@@ -127,7 +132,14 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
 
         private static string GetFieldReturnType(string type)
         {
-            var generic = string.Empty; // TODO: can we leverage a "standard value" field to store a generic key=value list?
+            var customType = string.Empty; // TODO: pull from "standard value" field to get custom "type" property
+            var generic = string.Empty; // TODO: pull from "standard value" field to get custom "generic" property
+
+            if (!string.IsNullOrWhiteSpace(customType))
+            {
+                return !string.IsNullOrWhiteSpace(generic) ? string.Format("{0}<{1}>", customType, generic) : customType;
+            }
+
             switch (type.ToLower())
             {
                 case "tristate":
