@@ -49,7 +49,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                 base.GenerateTemplateClassAndInterface(templateItem);
             }
 
-            return "[Put Custom Message here]";
+            return "Your classes and interfaces have been generated"; // TODO: [Put Custom Message here]
         }
     }
 }
