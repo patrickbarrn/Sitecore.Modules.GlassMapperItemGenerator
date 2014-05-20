@@ -44,7 +44,8 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                                  LongDescription = fieldInfo.InnerItem.Fields["__Long Description"].Value,
 
                                  PropertyName = fieldInfo.Name.AsPropertyName(),
-                                 ReturnType = GetFieldReturnType(fieldInfo.Type)
+                                 ReturnType = GetFieldReturnType(fieldInfo.Type),
+                                 ShouldInferType = ShouldInferType(fieldInfo.Type),
                              }))
             {
                 templateInfo.Fields.Add(templateField);
@@ -64,7 +65,8 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                                  LongDescription = fieldInfo.InnerItem.Fields["__Long Description"].Value,
 
                                  PropertyName = fieldInfo.Name.AsPropertyName(),
-                                 ReturnType = GetFieldReturnType(fieldInfo.Type)
+                                 ReturnType = GetFieldReturnType(fieldInfo.Type),
+                                 ShouldInferType = ShouldInferType(fieldInfo.Type),
                              }))
             {
                 templateInfo.OwnFields.Add(templateField);
@@ -130,6 +132,29 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
             return basePath + path;
         }
 
+        private static bool ShouldInferType(string type)
+        {
+            switch (type.ToLower())
+            {
+                case "treelist with search":
+                case "treelist":
+                case "treelistex":
+                case "treelist descriptive":
+                case "checklist":
+                case "multilist with search":
+                case "multilist":
+                case "grouped droplink":
+                case "droplink":
+                case "lookup":
+                case "droptree":
+                case "reference":
+                case "tree":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         private static string GetFieldReturnType(string type)
         {
             var customType = string.Empty; // TODO: pull from "standard value" field to get custom "type" property
@@ -164,7 +189,8 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                 case "checklist":
                 case "multilist with search":
                 case "multilist":
-                    return string.Format("IEnumerable<{0}>", string.IsNullOrEmpty(generic) ? "Guid" : generic);
+                    //return string.Format("IEnumerable<{0}>", string.IsNullOrEmpty(generic) ? "Guid" : generic);
+                    return string.Format("IEnumerable<{0}>", string.IsNullOrEmpty(generic) ? "IGlassBase" : generic);
 
                 case "grouped droplink":
                 case "droplink":
@@ -172,7 +198,8 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                 case "droptree":
                 case "reference":
                 case "tree":
-                    return "Guid";
+                    //return "Guid";
+                    return "IGlassBase";
 
                 case "file":
                     return "File";

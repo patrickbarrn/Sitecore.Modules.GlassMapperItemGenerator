@@ -12,8 +12,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Sitecore.Data;
+using Glass.Mapper.Sc.Configuration;
 using Glass.Mapper.Sc.Configuration.Attributes;
 using Glass.Mapper.Sc.Fields;
+using ${SitecoreTemplate.BaseClassNamespace};
 
 namespace ${SitecoreTemplate.Namespace}
 {
@@ -23,13 +25,24 @@ namespace ${SitecoreTemplate.Namespace}
     /// <para>Path: ${SitecoreTemplate.Path}</para>
     /// <para>ID: ${SitecoreTemplate.Id}</para>
     /// </summary>
-    [SitecoreType(TemplateId = "${SitecoreTemplate.Id}")]
-    public partial interface ${SitecoreTemplate.InterfaceName} : ${SitecoreTemplate.BaseClassNamespace}.IGlassBase${SitecoreTemplate.BaseTemplateNamespaces}
+    [SitecoreType(TemplateId = "${SitecoreTemplate.Id}", AutoMap = true)]
+    public partial interface ${SitecoreTemplate.InterfaceName} : IGlassBase${SitecoreTemplate.BaseTemplateNamespaces}
     {
 		#foreach($field in ${SitecoreTemplate.OwnFields})
 
 		#if($field.ReturnType == "")
 		//Could not find Field Type for $field.Name
+		#elseif($field.ShouldInferType)
+
+		/// <summary>
+        /// The $field.Name field.
+		/// <para>$field.ShortDescription</para>
+        /// <para>Field Type: $field.Type</para>
+        /// <para>Field ID: $field.Id</para>
+        /// </summary>
+		[SitecoreField("${field.Name}", Setting = SitecoreFieldSettings.InferType)]
+        $field.ReturnType $field.PropertyName { get; }
+
 		#else
 
 		/// <summary>

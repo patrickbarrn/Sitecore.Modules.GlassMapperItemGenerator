@@ -11,6 +11,6 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Models
 
         public string PropertyName { get; set; }
         public string ReturnType { get; set; }
-
+        public bool ShouldInferType { get; set; }
     }
 }
