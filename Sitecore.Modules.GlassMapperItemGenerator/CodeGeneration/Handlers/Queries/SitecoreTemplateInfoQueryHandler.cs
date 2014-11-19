@@ -157,14 +157,6 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
 
         private static string GetFieldReturnType(string type)
         {
-            var customType = string.Empty; // TODO: pull from "standard value" field to get custom "type" property
-            var generic = string.Empty; // TODO: pull from "standard value" field to get custom "generic" property
-
-            if (!string.IsNullOrWhiteSpace(customType))
-            {
-                return !string.IsNullOrWhiteSpace(generic) ? string.Format("{0}<{1}>", customType, generic) : customType;
-            }
-
             switch (type.ToLower())
             {
                 case "tristate":
@@ -189,8 +181,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                 case "checklist":
                 case "multilist with search":
                 case "multilist":
-                    //return string.Format("IEnumerable<{0}>", string.IsNullOrEmpty(generic) ? "Guid" : generic);
-                    return string.Format("IEnumerable<{0}>", string.IsNullOrEmpty(generic) ? "IGlassBase" : generic);
+                    return "IEnumerable<IGlassBase>";
 
                 case "grouped droplink":
                 case "droplink":
@@ -198,7 +189,6 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                 case "droptree":
                 case "reference":
                 case "tree":
-                    //return "Guid";
                     return "IGlassBase";
 
                 case "file":
