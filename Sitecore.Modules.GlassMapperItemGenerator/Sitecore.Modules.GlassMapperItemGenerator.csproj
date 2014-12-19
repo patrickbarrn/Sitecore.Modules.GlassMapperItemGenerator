@@ -81,6 +81,8 @@
     <None Include="App_Config\Include\Sitecore.Modules.GlassMapperItemGenerator.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\IItemMapperConstants.designer.vm" />
+    <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\IItemMapperConstants.vm" />
     <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\IGlassBase.vm" />
     <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\GlassBase.vm" />
     <None Include="sitecore modules\Shell\GlassMapperItemGenerator\Templates\ItemMapper.designer.vm" />

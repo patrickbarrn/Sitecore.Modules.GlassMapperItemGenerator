@@ -28,28 +28,6 @@ namespace ${SitecoreTemplate.Namespace}
     [SitecoreType(TemplateId = "${SitecoreTemplate.Id}", AutoMap = true)]
     public partial class ${SitecoreTemplate.ClassName} : GlassBase, ${SitecoreTemplate.InterfaceName}
     {
-        public const string TemplateIdString = "${SitecoreTemplate.Id}";
-        public static readonly ID TemplateId = new ID(TemplateIdString);
-        public const string TemplateName = "${SitecoreTemplate.Name}";
-
-        public static class Fields
-        {
-			#foreach($field in ${SitecoreTemplate.Fields})
-
-			#if($field.ReturnType != "")
-
-			public static class ${field.PropertyName}Field
-            {
-                public static readonly ID Id = new ID("$field.Id");
-                public const string Name = "$field.Name";
-            }
-
-			#end
-
-			#end
-
-        }
-
 		#foreach($field in ${SitecoreTemplate.Fields})
 
 		#if($field.FieldType == "")
