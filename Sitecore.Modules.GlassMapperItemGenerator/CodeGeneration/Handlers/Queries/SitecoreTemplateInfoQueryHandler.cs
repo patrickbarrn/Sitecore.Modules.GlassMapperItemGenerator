@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Contracts.Quries;
 using Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Models;
 using System.Linq;
@@ -106,7 +107,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
             if (index >= 0)
                 path = path.Substring(index + 1);
 
-            var namespaceSegments = new System.Collections.Generic.List<string>();
+            var namespaceSegments = new List<string>();
             namespaceSegments.Add(basePath);
             namespaceSegments.Add(path.Replace("/", "."));
 
@@ -118,18 +119,30 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
             // strip the base folder path to get the relative path of the template
             var path = templatePath.Replace("/sitecore/templates/", string.Empty);
 
-            // if not at the template root remove the first slash
-            var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
-            if (index >= 0)
-                path = path.Substring(index + 1);
+            if (path.StartsWith("User Defined"))
+            {
+                var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
+                if (index >= 0)
+                    path = path.Substring(index + 1);
+            }
 
-            if (endWithSepeartor && !path.EndsWith(seperator)) path += seperator;
+
+            // if not at the template root remove the first slash
+            //var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
+            //if (index >= 0)
+            //    path = path.Substring(index + 1);
+
+            //if (endWithSepeartor && !path.EndsWith(seperator)) path += seperator;
             if (!basePath.EndsWith(seperator)) basePath += seperator;
 
-            path = path.Replace("/", seperator);
-            path = RemoveIllegalCharacters(path);
+            var namespaceSegments = path.Split('/').ToList();
 
-            return basePath + path;
+            return basePath + namespaceSegments.AsNamespace().Replace(".", seperator) + seperator;
+
+            //path = path.Replace("/", seperator);
+            //path = RemoveIllegalCharacters(path);
+
+            //return basePath + path;
         }
 
         private static bool ShouldInferType(string type)

@@ -12,7 +12,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.Extensions
     {
         public static List<Item> GetTemplateSubItems(this Item item)
         {
-            var templateItem = (TemplateItem)Context.ContentDatabase.GetItem(Global.TemplateId);
+            var templateItem = (TemplateItem)Context.ContentDatabase.GetItem(TemplateIDs.Template);
 
             return item.Axes.GetDescendants()
                          .Where(x => x.Template.ID.Equals(templateItem.ID))

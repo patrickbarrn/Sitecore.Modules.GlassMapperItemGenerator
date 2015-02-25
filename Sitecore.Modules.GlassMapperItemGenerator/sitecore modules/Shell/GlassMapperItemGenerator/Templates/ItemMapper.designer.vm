@@ -25,7 +25,7 @@ namespace ${SitecoreTemplate.Namespace}
     /// <para>Path: ${SitecoreTemplate.Path}</para>
     /// <para>ID: ${SitecoreTemplate.Id}</para>
     /// </summary>
-    [SitecoreType(TemplateId = "${SitecoreTemplate.Id}", AutoMap = true)]
+    [SitecoreType(TemplateId = ${SitecoreTemplate.InterfaceName}Constants.TemplateIdString, AutoMap = true)]
     public partial class ${SitecoreTemplate.ClassName} : GlassBase, ${SitecoreTemplate.InterfaceName}
     {
 		#foreach($field in ${SitecoreTemplate.Fields})
@@ -40,7 +40,7 @@ namespace ${SitecoreTemplate.Namespace}
         /// <para>Field Type: $field.Type</para>
         /// <para>Field ID: $field.Id</para>
         /// </summary>
-		[SitecoreField("${field.Name}", Setting = SitecoreFieldSettings.InferType)]
+		[SitecoreField(${SitecoreTemplate.InterfaceName}Constants.Fields.${field.PropertyName}Field.Name, Setting = SitecoreFieldSettings.InferType)]
         public virtual $field.ReturnType $field.PropertyName { get; private set; }
 
 		#else
@@ -51,7 +51,7 @@ namespace ${SitecoreTemplate.Namespace}
         /// <para>Field Type: $field.Type</para>
         /// <para>Field ID: $field.Id</para>
         /// </summary>
-		[SitecoreField("${field.Name}")]
+		[SitecoreField(${SitecoreTemplate.InterfaceName}Constants.Fields.${field.PropertyName}Field.Name)]
         public virtual $field.ReturnType $field.PropertyName { get; private set; }
 
 		#end

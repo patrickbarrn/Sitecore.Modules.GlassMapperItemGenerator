@@ -73,12 +73,12 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.Extensions
                        : GetFormattedWord(word, TitleCase);
         }
 
-        //public static string AsFieldName(this string word)
-        //{
-        //    // return _someParam. 
-        //    // Note, this isn't MS guideline, but it easier to deal with than using this. everywhere to avoid name collisions
-        //    return GetFormattedWord(word, CamelCase, s => "_" + s);
-        //}
+        public static string AsFieldName(this string word)
+        {
+            // return _someParam. 
+            // Note, this isn't MS guideline, but it easier to deal with than using this. everywhere to avoid name collisions
+            return GetFormattedWord(word, CamelCase, s => "_" + s);
+        }
 
         /// <summary>
         /// Tests whether the words conflicts with reserved or language keywords, and if so, attempts to return 

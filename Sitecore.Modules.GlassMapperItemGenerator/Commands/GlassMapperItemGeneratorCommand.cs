@@ -13,11 +13,11 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.Commands
 
             var item = context.Items[0];
 
-            if (item.TemplateID.ToString().Equals(Global.TemplateId))
+            if (item.TemplateID.Equals(TemplateIDs.Template))
             {
                 DisplayControl(Global.GenerateByItemControlName, item.ID);
             }
-            else if (item.TemplateID.ToString().Equals(Global.TemplateFolderId))
+            else if (item.TemplateID.Equals(TemplateIDs.TemplateFolder))
             {
                 DisplayControl(Global.GenerateByFolderControlName, item.ID);
             }
