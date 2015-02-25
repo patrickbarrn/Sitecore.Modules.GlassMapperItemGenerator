@@ -24,7 +24,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                     InterfaceName = query.TemplateItem.Name.AsInterfaceName(),
                     Namespace = GetNamespace(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseNamespace),
                     FilePathFolder =
-                        CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\", true),
+                        CombineClassData(query.TemplateItem.InnerItem.Paths.ParentPath, query.BaseFilePath, "\\"),
                     IsInterfaceTemplate = query.TemplateItem.Name.IsInterfaceWord(),
                     BaseTemplateNamespaces = GetBaseNamespaces(query.TemplateItem, query.BaseNamespace, ", "),
                 };
@@ -78,43 +78,16 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
 
         private static string GetBaseNamespaces(Data.Items.TemplateItem template, string baseNamespace, string preString)
         {
-            var namespaces = new System.Collections.Generic.List<string>();
-
-            foreach (var baseTemplate in template.BaseTemplates)
-            {
-                if (baseTemplate.InnerItem.Paths.Path.Contains("/sitecore/templates/System"))
-                    continue;
-                var parentPathNamespace = GetNamespace(baseTemplate.InnerItem.Paths.ParentPath, baseNamespace);
-                var interfaceName = baseTemplate.InnerItem.Name.AsInterfaceName();
-                namespaces.Add(parentPathNamespace +"." +interfaceName);
-            }
+            var namespaces = (from baseTemplate in template.BaseTemplates
+                where !baseTemplate.InnerItem.Paths.Path.Contains("/sitecore/templates/System")
+                let parentPathNamespace = GetNamespace(baseTemplate.InnerItem.Paths.ParentPath, baseNamespace)
+                let interfaceName = baseTemplate.InnerItem.Name.AsInterfaceName()
+                select parentPathNamespace + "." + interfaceName).ToList();
 
             return namespaces.Any() ? preString + string.Join(", ", namespaces) : string.Empty;
         }
 
-        private static string RemoveIllegalCharacters(string value)
-        {
-            return value.Replace(" ", string.Empty).Replace("-", string.Empty);
-        }
-
         private static string GetNamespace(string templatePath, string basePath)
-        {
-            // strip the base folder path to get the relative path of the template
-            var path = templatePath.Replace("/sitecore/templates/", string.Empty);
-
-            // if not at the template root remove the first slash
-            var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
-            if (index >= 0)
-                path = path.Substring(index + 1);
-
-            var namespaceSegments = new List<string>();
-            namespaceSegments.Add(basePath);
-            namespaceSegments.Add(path.Replace("/", "."));
-
-            return namespaceSegments.AsNamespace();
-        }
-
-        private static string CombineClassData(string templatePath, string basePath, string seperator, bool endWithSepeartor)
         {
             // strip the base folder path to get the relative path of the template
             var path = templatePath.Replace("/sitecore/templates/", string.Empty);
@@ -126,23 +99,27 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.CodeGeneration.Handlers.Quer
                     path = path.Substring(index + 1);
             }
 
+            var namespaceSegments = new List<string> {basePath, path.Replace("/", ".")};
 
-            // if not at the template root remove the first slash
-            //var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
-            //if (index >= 0)
-            //    path = path.Substring(index + 1);
+            return namespaceSegments.AsNamespace();
+        }
 
-            //if (endWithSepeartor && !path.EndsWith(seperator)) path += seperator;
+        private static string CombineClassData(string templatePath, string basePath, string seperator)
+        {
+            // strip the base folder path to get the relative path of the template
+            var path = templatePath.Replace("/sitecore/templates/", string.Empty);
+
+            if (path.StartsWith("User Defined"))
+            {
+                var index = path.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
+                if (index >= 0)
+                    path = path.Substring(index + 1);
+            }
+
             if (!basePath.EndsWith(seperator)) basePath += seperator;
-
             var namespaceSegments = path.Split('/').ToList();
 
             return basePath + namespaceSegments.AsNamespace().Replace(".", seperator) + seperator;
-
-            //path = path.Replace("/", seperator);
-            //path = RemoveIllegalCharacters(path);
-
-            //return basePath + path;
         }
 
         private static bool ShouldInferType(string type)
