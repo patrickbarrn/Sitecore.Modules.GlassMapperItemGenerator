@@ -46,10 +46,10 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
                                 .Select(template => Context.ContentDatabase.GetItem(template.Value))
                                 .Where(templateItem => templateItem != null))
             {
-                base.GenerateTemplateClassAndInterface(templateItem);
+                GenerateTemplateClassAndInterface(templateItem);
             }
 
-            return "Your classes and interfaces have been generated"; // TODO: [Put Custom Message here]
+            return "Your classes and interfaces have been generated";
         }
     }
 }

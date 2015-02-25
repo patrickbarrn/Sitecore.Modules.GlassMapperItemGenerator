@@ -15,9 +15,9 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
 
         public override string GenerateCodeFiles()
         {
-            base.GenerateTemplateClassAndInterface(TemplateItem);
+            GenerateTemplateClassAndInterface(TemplateItem);
 
-            return "Your class and interface have been generated"; // TODO: [Put Custom Message here]
+            return "Your class and interface have been generated";
         }
     }
 }

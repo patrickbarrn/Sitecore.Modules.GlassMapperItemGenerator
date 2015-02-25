@@ -80,7 +80,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.UI.WebControls
             GenerateGlassBaseItems();
             var message = GenerateCodeFiles();
 
-            SheerResponse.Alert(message, new string[0]);
+            SheerResponse.Alert(message);
             base.OnOK(sender, args);
         }
 

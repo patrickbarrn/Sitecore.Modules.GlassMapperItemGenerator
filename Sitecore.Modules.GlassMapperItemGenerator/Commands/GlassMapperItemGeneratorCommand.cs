@@ -24,7 +24,7 @@ namespace Sitecore.Modules.GlassMapperItemGenerator.Commands
             else
             {
                 Web.UI.Sheer.SheerResponse.Alert(
-                    "You can only run the Item Generator on a Template or Template Folder.", new string[0]);
+                    "You can only run the Item Generator on a Template or Template Folder.");
             }
         }
 
